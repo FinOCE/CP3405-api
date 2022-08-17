@@ -1,22 +1,34 @@
 import { Context, HttpRequest } from "@azure/functions"
-import Func from "models/Func"
+import Func, { HttpStatus } from "models/Func"
+import Token from "models/Token"
 
 export default class FuncManager {
-  public readonly func: Func
+  public readonly func?: Func
+
+  public constructor(public context: Context, public req: HttpRequest) {
+    const funcName = this.context.executionContext.functionName.substring(2)
+    const func = require(`../funcs/${funcName}.${req.method!}`)?.default
+    if (func) this.func = new func(this.context, this.req)
+  }
 
   /**
    * Trigger a function
    */
   public static async trigger(context: Context, req: HttpRequest) {
     const manager = new FuncManager(context, req)
-    manager.func.run()
-  }
 
-  public constructor(public context: Context, public req: HttpRequest) {
-    const funcName = this.context.executionContext.functionName.substring(2)
-    this.func = new (require(`../funcs/${funcName}.${req.method!}`).default)(
-      this.context,
-      this.req
-    )
+    // Check that function exists
+    if (!manager.func)
+      return Func.respond(manager.context, HttpStatus.NotImplemented)
+
+    // Validate user token and check permissions with func
+    const token = req.headers["authorization"]?.split("Bearer ")?.[1]
+    if (!Token.validate(token) && manager.func.roles.length > 0)
+      return Func.respond(manager.context, HttpStatus.Unauthorized)
+
+    // TODO: If user does not meet permissions, return forbidden error
+
+    // Run the validated function
+    manager.func.run()
   }
 }
