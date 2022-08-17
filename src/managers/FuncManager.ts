@@ -1,6 +1,7 @@
 import { Context, HttpRequest } from "@azure/functions"
 import Func, { HttpStatus } from "models/Func"
-import Token from "models/Token"
+import TokenManager from "managers/TokenManager"
+import { UserProperties } from "types/user"
 
 export default class FuncManager {
   public readonly func?: Func
@@ -23,10 +24,12 @@ export default class FuncManager {
 
     // Validate user token and check permissions with func
     const token = req.headers["authorization"]?.split("Bearer ")?.[1]
-    if (!Token.validate(token) && manager.func.roles.length > 0)
+    if (!TokenManager.validate(token) && manager.func.roles.length > 0)
       return Func.respond(manager.context, HttpStatus.Unauthorized)
 
-    // TODO: If user does not meet permissions, return forbidden error
+    const user = TokenManager.decode<UserProperties>(token!)
+    if (!manager.func.roles.map(r => HttpStatus[r]).includes(user.role))
+      return Func.respond(manager.context, HttpStatus.Forbidden)
 
     // Run the validated function
     manager.func.run()
