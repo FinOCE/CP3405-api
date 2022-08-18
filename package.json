@@ -13,12 +13,18 @@
   "description": "",
   "devDependencies": {
     "@azure/functions": "^1.0.1-beta1",
+    "@types/gremlin": "^3.6.0",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^18.7.6",
     "npm-run-all": "^4.1.5",
     "typescript": "^3.3.3"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.5.1"
+    "email-validator": "^2.0.4",
+    "gremlin": "^3.6.1",
+    "gremlin-cosmos": "0.0.14",
+    "jsonwebtoken": "^8.5.1",
+    "nanoid": "^4.0.0",
+    "password-validator": "^5.3.0"
   }
 }

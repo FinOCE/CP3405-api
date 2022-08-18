@@ -1,11 +1,18 @@
 import * as jwt from "jsonwebtoken"
 
+export type Token<T extends Record<string, any>> = jwt.JwtPayload & T
+
 export default class TokenManager {
   /**
    * Generate a JWT with the given payload
    */
-  public static generate(payload: jwt.JwtPayload): string {
-    payload = Object.assign({}, payload)
+  public static generate(payload: jwt.JwtPayload, days: number = 7): string {
+    payload = Object.assign(
+      {
+        exp: Math.floor(new Date().getTime() + 1000 * 60 * 60 * 24 * days)
+      },
+      payload
+    )
     return jwt.sign(payload, process.env.JwtSecretKey!)
   }
 
@@ -26,7 +33,7 @@ export default class TokenManager {
   /**
    * Decode a token to get the payload
    */
-  public static decode<T>(token: string): jwt.JwtPayload & T {
-    return jwt.decode(token) as jwt.JwtPayload & T
+  public static decode<T>(token: string): Token<T> {
+    return jwt.decode(token) as Token<T>
   }
 }
