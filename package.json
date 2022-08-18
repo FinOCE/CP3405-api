@@ -24,7 +24,7 @@
     "gremlin": "^3.6.1",
     "gremlin-cosmos": "0.0.14",
     "jsonwebtoken": "^8.5.1",
-    "nanoid": "^4.0.0",
-    "password-validator": "^5.3.0"
+    "password-validator": "^5.3.0",
+    "short-uuid": "^4.2.0"
   }
 }

@@ -8,7 +8,8 @@ export default class FuncManager {
 
   public constructor(public context: Context, public req: HttpRequest) {
     const funcName = this.context.executionContext.functionName.substring(2)
-    const func = require(`../funcs/${funcName}.${req.method!}`)?.default
+    const func =
+      require(`../funcs/${funcName}.${req.method!.toLowerCase()}`)?.default
     if (func) this.func = new func(this.context, this.req)
   }
 
@@ -37,6 +38,6 @@ export default class FuncManager {
     }
 
     // Run the validated function
-    manager.func.run()
+    await manager.func.run()
   }
 }
