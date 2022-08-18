@@ -31,7 +31,7 @@ export default class extends Func {
     ).then(res => res._items?.[0] as UserProperties | undefined)
 
     if (!user)
-      return this.respond(403, {
+      return this.respond(HttpStatus.Forbidden, {
         message: "Could not find user with given email and password"
       })
 

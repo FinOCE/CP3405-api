@@ -1,14 +1,13 @@
 import Func, { HttpStatus } from "../models/Func"
 import { validate } from "email-validator"
 import { UserProperties } from "../types/user"
-import Schema from "password-validator"
 import PasswordManager from "../managers/PasswordManager"
 import TokenManager from "../managers/TokenManager"
 import short from "short-uuid"
 
 export default class extends Func {
   public async run() {
-    // Validate request body
+    // Validate request email
     const email = this.req.body.email as string
     if (!email)
       return this.respond(HttpStatus.BadRequest, {
@@ -20,33 +19,22 @@ export default class extends Func {
       })
     }
 
-    const schema = new Schema()
-      .is()
-      .min(8)
-      .is()
-      .max(64)
-      .has()
-      .uppercase()
-      .has()
-      .lowercase()
-      .has()
-      .digits(2)
-      .has()
-      .not()
-      .spaces()
-
+    // Validate request password
     const password = this.req.body.password as string
     if (!password)
       return this.respond(HttpStatus.BadRequest, {
         message: "Missing password in body"
       })
-    else if (!schema.validate(password)) {
+    else if (!PasswordManager.validate(password)) {
       return this.respond(HttpStatus.BadRequest, {
         message:
           "Password must be 8-64 characters long, with uppercase and lowercase letters and at least 2 digits"
       })
     }
 
+    const hashedPassword = PasswordManager.hash(password)
+
+    // Validate request first name
     const firstName = this.req.body.firstName as string
     if (!firstName)
       return this.respond(HttpStatus.BadRequest, {
@@ -61,6 +49,7 @@ export default class extends Func {
         message: "First name cannot be greater than 64 characters"
       })
 
+    // Validate request last name
     const lastName = this.req.body.lastName as string
     if (!lastName)
       return this.respond(HttpStatus.BadRequest, {
@@ -75,6 +64,7 @@ export default class extends Func {
         message: "Last name cannot be greater than 64 characters"
       })
 
+    // Validate request nickname
     const nickName = this.req.body.nickName as string
     if (!nickName)
       return this.respond(HttpStatus.BadRequest, {
@@ -101,13 +91,9 @@ export default class extends Func {
         message: "Account with given email already exists"
       })
 
-    // Hash password
-    const hashedPassword = PasswordManager.hash(password)
-
-    // Generate user ID
+    // Create account
     const id = short().generate()
 
-    // Create account
     const user = await this.query<UserProperties>(
       `g.addV('user')
         .property('id', '${id}')

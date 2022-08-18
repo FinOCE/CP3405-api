@@ -7,9 +7,10 @@ export default class FuncManager {
   public readonly func?: Func
 
   public constructor(public context: Context, public req: HttpRequest) {
+    // Find and bind function to the manager
     const funcName = this.context.executionContext.functionName.substring(2)
-    const func =
-      require(`../funcs/${funcName}.${req.method!.toLowerCase()}`)?.default
+    const funcMethod = req.method!.toLowerCase()
+    const func = require(`../funcs/${funcName}.${funcMethod}`)?.default
     if (func) this.func = new func(this.context, this.req)
   }
 
@@ -28,9 +29,9 @@ export default class FuncManager {
     if (!TokenManager.validate(token) && manager.func.roles.length > 0)
       return Func.respond(manager.context, HttpStatus.Unauthorized)
 
-    let user: Token<UserProperties> | undefined
     if (token) {
-      user = TokenManager.decode<UserProperties>(token!)
+      const user = TokenManager.decode<UserProperties>(token!)
+
       if (!manager.func.roles.map(r => HttpStatus[r]).includes(user.role))
         return Func.respond(manager.context, HttpStatus.Forbidden)
 
