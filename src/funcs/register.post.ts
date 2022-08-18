@@ -7,15 +7,21 @@ import short from "short-uuid"
 
 export default class extends Func {
   public async run() {
+    // Ensure the request contains a body
+    if (!this.req.body)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "No body provided in request"
+      })
+
     // Validate request email
     const email = this.req.body.email as string
     if (!email)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing email in body"
+        message: "No email provided"
       })
     else if (!validate(email)) {
       return this.respond(HttpStatus.BadRequest, {
-        message: "Invalid email in body"
+        message: "Invalid email provided"
       })
     }
 
@@ -23,7 +29,7 @@ export default class extends Func {
     const password = this.req.body.password as string
     if (!password)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing password in body"
+        message: "No password provided"
       })
     else if (!PasswordManager.validate(password)) {
       return this.respond(HttpStatus.BadRequest, {
@@ -38,7 +44,7 @@ export default class extends Func {
     const firstName = this.req.body.firstName as string
     if (!firstName)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing first name in body"
+        message: "No first name provided"
       })
     else if (
       firstName.length <= 0 ||
@@ -53,7 +59,7 @@ export default class extends Func {
     const lastName = this.req.body.lastName as string
     if (!lastName)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing last name in body"
+        message: "No last name provided"
       })
     else if (
       lastName.length <= 0 ||
@@ -68,7 +74,7 @@ export default class extends Func {
     const nickName = this.req.body.nickName as string
     if (!nickName)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing nick name in body"
+        message: "No nickname provided"
       })
     else if (
       nickName.length <= 0 ||
@@ -88,7 +94,7 @@ export default class extends Func {
 
     if (exists)
       return this.respond(HttpStatus.Conflict, {
-        message: "Account with given email already exists"
+        message: "The provided email is already in use"
       })
 
     // Create account

@@ -1,6 +1,6 @@
 import { Context, HttpRequest } from "@azure/functions"
 import Func, { HttpStatus } from "../models/Func"
-import TokenManager, { Token } from "../managers/TokenManager"
+import TokenManager from "../managers/TokenManager"
 import { UserProperties } from "../types/user"
 
 export default class FuncManager {

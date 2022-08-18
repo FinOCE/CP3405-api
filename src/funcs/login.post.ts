@@ -5,17 +5,23 @@ import { UserProperties } from "../types/user"
 
 export default class extends Func {
   public async run() {
+    // Ensure the request contains a body
+    if (!this.req.body)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "No body provided in request"
+      })
+
     // Validate request body
     const email = this.req.body.email
     if (!email)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing email in body"
+        message: "No email provided"
       })
 
     const password = this.req.body.password
     if (!password)
       return this.respond(HttpStatus.BadRequest, {
-        message: "Missing password in body"
+        message: "No password provided"
       })
 
     // Hash the password
@@ -32,7 +38,7 @@ export default class extends Func {
 
     if (!user)
       return this.respond(HttpStatus.Forbidden, {
-        message: "Could not find user with given email and password"
+        message: "Could not find a user with given email and password"
       })
 
     // Create token and respond to function call with it
