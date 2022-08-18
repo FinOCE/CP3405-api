@@ -1,7 +1,7 @@
 import { Context, HttpRequest } from "@azure/functions"
-import { Token } from "managers/TokenManager"
-import { Roles } from "models/User"
-import { UserProperties } from "types/user"
+import { Token } from "../managers/TokenManager"
+import { Roles } from "../models/User"
+import { UserProperties } from "../types/user"
 import * as Gremlin from "gremlin"
 import { GremlinResponse } from "gremlin-cosmos"
 

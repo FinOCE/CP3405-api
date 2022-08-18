@@ -1,4 +1,4 @@
-import { Roles } from "models/User"
+import { Roles } from "../models/User"
 
 export type UserProperties = {
   userId: string
