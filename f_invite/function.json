@@ -7,10 +7,10 @@
       "name": "req",
       "methods": [
         "get",
-        "post",
+        "put",
         "delete"
       ],
-      "route": "users/{userId:alpha}/invites/{inviteId:alpha?}"
+      "route": "users/{parentId:alpha}/invites/{childId:alpha?}"
     },
     {
       "type": "http",
