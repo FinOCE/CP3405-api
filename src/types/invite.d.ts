@@ -1,0 +1,3 @@
+type InviteProperties = {
+  timestamp: number
+}

@@ -1,1 +1,4 @@
-export enum Roles {}
+export enum Roles {
+  Parent,
+  Child
+}

@@ -25,14 +25,14 @@ export default abstract class Func {
   /**
    * Run the function
    */
-  public abstract run(): Promise<void>
+  public abstract run(): Promise<HttpStatus>
 
   /**
    * Respond to this function call by appending data to context
    */
-  public respond(status: HttpStatus, data?: any) {
-    Func.respond(this.context, status, this.cosmosStats, data)
+  public respond(status: HttpStatus, data?: any): HttpStatus {
     this.gremlinClient?.close()
+    return Func.respond(this.context, status, this.cosmosStats, data)
   }
 
   /**
@@ -43,7 +43,7 @@ export default abstract class Func {
     status: HttpStatus,
     cosmosStats?: CosmosStats,
     data?: any
-  ) {
+  ): HttpStatus {
     context.res = {
       body: {
         data,
@@ -51,6 +51,8 @@ export default abstract class Func {
       },
       status
     }
+
+    return status
   }
 
   /**
