@@ -85,6 +85,17 @@ export default class extends Func {
         message: "Nick name cannot be greater than 64 characters"
       })
 
+    // Validate request role
+    const role = this.req.body.role as string
+    if (!role)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "No role provided"
+      })
+    else if (!["Role", "Child"].includes(role))
+      return this.respond(HttpStatus.BadRequest, {
+        message: "Invalid role provided"
+      })
+
     // Check if account already exists with the email
     const exists = await this.query(
       `g.V()
@@ -109,6 +120,8 @@ export default class extends Func {
         .property('firstName', '${firstName}')
         .property('lastName', '${lastName}')
         .property('nickName', '${nickName}')
+        .property('timestamp', ${Date.now()})
+        .property('role', '${role}')
         .map(valueMap().unfold().group().by(keys).by(select(values).limit(local,1)))`
     ).then(res => res._items[0])
 
