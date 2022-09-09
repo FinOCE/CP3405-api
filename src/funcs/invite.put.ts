@@ -3,18 +3,25 @@ import { InviteStatus } from "../models/Invite"
 
 export default class extends Func {
   public async run() {
-    // Ensure user is logged in
-    if (!this.user) return this.respond(HttpStatus.Unauthorized)
-
-    // Get route parameters
+    // Validate route
     const parentId: string = this.context.bindingData.parentId
+    const childId: string | undefined = this.context.bindingData.childId
+
+    if (!childId)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "Missing child ID in route"
+      })
+
+    // Ensure user is logged in and request is made by the child
+    if (!this.user) return this.respond(HttpStatus.Unauthorized)
+    if (this.user.userId !== childId) this.respond(HttpStatus.Forbidden)
 
     // Create invite
     const res = await this.query(`
       g.V('${parentId}')
         .hasLabel('user')
         .as('parent')
-      .V('${this.user.userId}')
+      .V('${childId}')
         .hasLabel('user')
         .as('child')
       .addE('hasInvite')

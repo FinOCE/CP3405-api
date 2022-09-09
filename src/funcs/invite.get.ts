@@ -4,9 +4,13 @@ import { UserProperties } from "../types/user"
 
 export default class extends Func {
   public async run() {
-    // Validate route
+    // Get route parameters
     const parentId: string = this.context.bindingData.parentId
     const childId: string | undefined = this.context.bindingData.childId
+
+    // Ensure user is logged in and is the parent
+    if (!this.user) return this.respond(HttpStatus.Unauthorized)
+    if (this.user.userId !== parentId) return this.respond(HttpStatus.Forbidden)
 
     // Fetch invite
     const res = await this.query<
