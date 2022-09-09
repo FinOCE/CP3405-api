@@ -1,4 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
+import { InviteStatus } from "../models/Invite"
 import { UserProperties } from "../types/user"
 
 export default class extends Func {
@@ -12,6 +13,13 @@ export default class extends Func {
       g.V('${parentId}')
         .hasLabel('user')
       .outE('hasInvite')
+        .hasNot(
+          'status',
+          within(
+            '${InviteStatus[InviteStatus.Rejected]}',
+            '${InviteStatus[InviteStatus.Accepted]}'
+          )
+        )
       .inV()
         ${!childId ? "" : `.has('userId', '${childId}')`}
     `)

@@ -1,4 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
+import { InviteStatus } from "../models/Invite"
 
 export default class extends Func {
   public async run() {
@@ -17,6 +18,7 @@ export default class extends Func {
         .hasLabel('user')
         .as('child')
       .addE('hasInvite')
+        .property('status', '${InviteStatus[InviteStatus.Pending]}')
         .property('timestamp', ${Date.now()})
         .from('parent')
         .to('child')
