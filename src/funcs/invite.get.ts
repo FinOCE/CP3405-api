@@ -17,7 +17,7 @@ export default class extends Func {
     `)
 
     // Respond to request
-    this.respond(
+    return this.respond(
       HttpStatus.Ok,
       res._items.map(child => ({ type: "childRequest", child }))
     )

@@ -29,6 +29,6 @@ export default class extends Func {
       })
 
     // Respond to request
-    this.respond(HttpStatus.NoContent)
+    return this.respond(HttpStatus.NoContent)
   }
 }
