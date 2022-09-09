@@ -33,7 +33,7 @@ export default class TokenManager {
   /**
    * Decode a token to get the payload
    */
-  public static decode<T>(token: string): Token<T> {
+  public static decode<T extends Record<string, any>>(token: string): Token<T> {
     return jwt.decode(token) as Token<T>
   }
 }

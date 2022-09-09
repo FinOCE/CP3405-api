@@ -8,5 +8,5 @@ export type UserProperties = {
   lastName: string
   nickName: string
   timestamp: number
-  role?: keyof typeof Roles
+  role: keyof typeof Roles
 }

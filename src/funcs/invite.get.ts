@@ -9,20 +9,30 @@ export default class extends Func {
     const childId: string | undefined = this.context.bindingData.childId
 
     // Fetch invite
-    const res = await this.query<Vertex<UserProperties, "user">>(`
+    const res = await this.query<
+      Vertex<Hide<UserProperties, "password" | "email">, "user">
+    >(`
       g.V('${parentId}')
         .hasLabel('user')
       .outE('hasInvite')
-        .hasNot(
-          'status',
-          within(
-            '${InviteStatus[InviteStatus.Rejected]}',
-            '${InviteStatus[InviteStatus.Accepted]}'
+        .not(
+          has(
+            'status',
+            within(
+              '${InviteStatus[InviteStatus.Rejected]}',
+              '${InviteStatus[InviteStatus.Accepted]}'
+            )
           )
         )
       .inV()
         ${!childId ? "" : `.has('userId', '${childId}')`}
     `)
+
+    // Remove properties that shouldn't be sent
+    for (const child of res._items) {
+      delete child.properties.password
+      delete child.properties.email
+    }
 
     // Respond to request
     return this.respond(

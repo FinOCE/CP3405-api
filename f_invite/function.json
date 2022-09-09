@@ -10,7 +10,7 @@
         "put",
         "delete"
       ],
-      "route": "users/{parentId:alpha}/invites/{childId:alpha?}"
+      "route": "users/{parentId:regex(^[a-zA-Z0-9]+$)}/invites/{childId:regex(^[a-zA-Z0-9]+$)?}"
     },
     {
       "type": "http",
