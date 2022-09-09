@@ -6,7 +6,7 @@ export default class extends Func {
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
     // Get route parameters
-    const parentId: string | undefined = this.context.bindingData.parentId
+    const parentId: string = this.context.bindingData.parentId
 
     // Create invite
     const res = await this.query(`

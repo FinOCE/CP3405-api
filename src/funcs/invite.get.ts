@@ -8,23 +8,18 @@ export default class extends Func {
     const childId: string | undefined = this.context.bindingData.childId
 
     // Fetch invite
-    const res = await this.query<
-      EdgeAndVertex<InviteProperties, UserProperties, "hasInvite", "user">
-    >(`
+    const res = await this.query<Vertex<UserProperties, "user">>(`
       g.V('${parentId}')
         .hasLabel('user')
       .outE('hasInvite')
-        .as('edge')
       .inV()
         ${!childId ? "" : `.has('userId', '${childId}')`}
-        .map(valueMap().unfold().group().by(keys).by(select(values).limit(local,1)))
-      .project('vertex', 'edge')
-        .by()
-        .by('edge')`)
-
-    // TODO: Figure out the format of the response and handle appropriately
+    `)
 
     // Respond to request
-    this.respond(HttpStatus.NotImplemented)
+    this.respond(
+      HttpStatus.Ok,
+      res._items.map(child => ({ type: "childRequest", child }))
+    )
   }
 }
