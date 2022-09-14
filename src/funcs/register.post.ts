@@ -5,6 +5,24 @@ import PasswordManager from "../managers/PasswordManager"
 import TokenManager from "../managers/TokenManager"
 import short from "short-uuid"
 
+/**
+ * Attempt to register.
+ *
+ * Route: POST /register
+ * Body: {
+ *  email: string
+ *  password: string
+ *  firstName: string
+ *  lastName: string
+ *  nickName: string
+ *  roles: Role
+ * }
+ *
+ * Possible responses:
+ * - Conflict: User already exists with provided data - API.Error
+ * - BadRequest: Invalid body provided - API.Error
+ * - Ok: Register successful - API.Token
+ */
 export default class extends Func {
   public async run() {
     // Ensure the request contains a body

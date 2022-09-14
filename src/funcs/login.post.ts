@@ -3,6 +3,20 @@ import TokenManager from "../managers/TokenManager"
 import Func, { HttpStatus } from "../models/Func"
 import { UserProperties } from "../types/user"
 
+/**
+ * Attempt to login.
+ *
+ * Route: POST /login
+ * Body: {
+ *  email: string
+ *  password: string
+ * }
+ *
+ * Possible responses:
+ * - Forbidden: No user with the details found - No data
+ * - BadRequest: Invalid body provided - API.Error
+ * - Ok: Login successful - API.Token
+ */
 export default class extends Func {
   public async run() {
     // Ensure the request contains a body
@@ -36,10 +50,7 @@ export default class extends Func {
         .map(valueMap().unfold().group().by(keys).by(select(values).limit(local,1)))`
     ).then(res => res._items?.[0] as UserProperties | undefined)
 
-    if (!user)
-      return this.respond(HttpStatus.Forbidden, {
-        message: "Could not find a user with given email and password"
-      })
+    if (!user) return this.respond(HttpStatus.Forbidden)
 
     // Create token and respond to function call with it
     const token = TokenManager.generate(user)

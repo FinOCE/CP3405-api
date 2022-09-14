@@ -2,6 +2,20 @@ import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
 import { UserProperties } from "../types/user"
 
+/**
+ * Fetch existing invites. This finds all pending invites. If no childId is
+ * provided in the route, it fetches all pending, otherwise it only gets that
+ * specific one.
+ *
+ * Route: GET /users/{parentId}/children/{childId?}
+ * Body: None
+ *
+ * Possible responses:
+ * - Unauthorized: User is not logged in - No data
+ * - Forbidden: User is not the one who received the invites - No data
+ * - BadRequest: The request was not valid - API.Error
+ * - Ok: Successfully fetched the invites: Noti.ChildRequest[]
+ */
 export default class extends Func {
   public async run() {
     // Get route parameters
