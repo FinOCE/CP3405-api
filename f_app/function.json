@@ -1,0 +1,22 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "put",
+        "delete"
+      ],
+      "route": "users/{parentId:regex(^[a-zA-Z0-9]+$)}/apps/{appId:regex(^[a-zA-Z0-9]+$)?}"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ],
+  "scriptFile": "../dist/src/index.js"
+}
