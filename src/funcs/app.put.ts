@@ -83,6 +83,17 @@ export default class extends Func {
       ).then(res => res._items[0])
     }
 
+    // Delete existing link if exists
+    await this.query(`
+      g.V('${parentId}')
+      .outE('hasApp')
+        .where(
+          inV()
+            .has('appId', '${appId}')
+        )
+        .drop()
+    `)
+
     // Link parent to app
     await this.query(`
       g.V('${parentId}')
@@ -90,7 +101,7 @@ export default class extends Func {
       .V('${app!.id}')
         .as('app')
       .addE('hasApp')
-        .property('message', '${message}')
+        ${!message ? "" : `.property('message', '${message}')`}
         .property('timestamp', ${Date.now()})
         .from('parent')
         .to('app')
