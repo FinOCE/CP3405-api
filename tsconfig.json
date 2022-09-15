@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "target": "es6",
     "outDir": "dist",
     "rootDir": ".",
+    "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "target": "es6"
   },
   "exclude": [ "node_modules" ]
 }
