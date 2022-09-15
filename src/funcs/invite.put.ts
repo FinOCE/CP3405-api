@@ -29,6 +29,32 @@ export default class extends Func {
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
     if (this.user.userId !== childId) this.respond(HttpStatus.Forbidden)
 
+    // Check that user roles are correct
+    const validRoles = await this.query<{
+      parent: Vertex<UserProperties, "user">
+      child: Vertex<UserProperties, "user">
+    }>(
+      `
+        g.V('${parentId}')
+          .hasLabel('user')
+          .has('role', 'Parent')
+          .as('parent')
+        .V('${childId}')
+          .hasLabel('user')
+          .has('role', 'Child')
+          .as('child')
+        .select('parent', 'child')
+      `
+    ).then(res => {
+      console.log(res._items)
+      return res._items[0]?.child && res._items[0]?.parent
+    })
+
+    if (!validRoles)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "Invites can only be made by a child to a parent"
+      })
+
     // Create invite
     const res = await this.query<
       Vertex<Hide<UserProperties, "password" | "email">, "user">
