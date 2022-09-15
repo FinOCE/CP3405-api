@@ -1,6 +1,19 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
+import { UserProperties } from "../types/user"
 
+/**
+ * Add a child to a parent. This is called when an invite is accepted.
+ *
+ * Route: PUT /users/{parentId}/children/{childId}
+ * Body: None
+ *
+ * Possible responses:
+ * - Unauthorized: User is not logged in - No data
+ * - Forbidden: User is not the one who received the invite - No data
+ * - BadRequest: The request was not valid - API.Error
+ * - Ok: Invite successfully accepted - Noti.ChildRequestAccept[]
+ */
 export default class extends Func {
   public async run() {
     // Get route parameters
@@ -45,7 +58,9 @@ export default class extends Func {
       })
 
     // Create connection and mark status as accepted
-    const res = await this.query(`
+    const res = await this.query<
+      Vertex<Hide<UserProperties, "password" | "email">, "user">
+    >(`
       g.V('${parentId}')
         .hasLabel('user')
         .as('parent')
@@ -73,6 +88,7 @@ export default class extends Func {
               .has('userId', '${childId}')
           )
         .property('status', '${InviteStatus[InviteStatus.Accepted]}')
+      .inV()
     `)
 
     // Handle if the parent ID does not exist
@@ -81,7 +97,16 @@ export default class extends Func {
         message: "Invalid parent ID provided"
       })
 
+    // Remove properties that shouldn't be sent
+    for (const child of res._items) {
+      delete child.properties.password
+      delete child.properties.email
+    }
+
     // Respond to request
-    return this.respond(HttpStatus.NoContent)
+    return this.respond(
+      HttpStatus.Ok,
+      res._items.map(child => ({ type: "childRequestAccept", child }))
+    )
   }
 }

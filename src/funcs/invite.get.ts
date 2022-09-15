@@ -2,6 +2,22 @@ import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
 import { UserProperties } from "../types/user"
 
+/**
+ * Fetch existing invites. This finds all pending invites. If no childId is
+ * provided in the route, it fetches all pending, otherwise it only gets that
+ * specific one. NotFound only occurs if searching with a childId and it isn't
+ * found.
+ *
+ * Route: GET /users/{parentId}/children/{childId?}
+ * Body: None
+ *
+ * Possible responses:
+ * - Unauthorized: User is not logged in - No data
+ * - Forbidden: User is not the one who received the invites - No data
+ * - BadRequest: The request was not valid - API.Error
+ * - NotFound: Specific child invite could not be found - No data
+ * - Ok: Successfully fetched the invites: Noti.ChildRequest[]
+ */
 export default class extends Func {
   public async run() {
     // Get route parameters
@@ -31,6 +47,10 @@ export default class extends Func {
       .inV()
         ${!childId ? "" : `.has('userId', '${childId}')`}
     `)
+
+    // Return not found if specific searched for but doesn't exist
+    if (childId && res._items.length === 0)
+      return this.respond(HttpStatus.NotFound)
 
     // Remove properties that shouldn't be sent
     for (const child of res._items) {

@@ -1,6 +1,19 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
+import { UserProperties } from "../types/user"
 
+/**
+ * Create an invite. This is called when an invite is sent.
+ *
+ * Route: PUT /users/{parentId}/invites/{childId}
+ * Body: None
+ *
+ * Possible responses:
+ * - Unauthorized: User is not logged in - No data
+ * - Forbidden: User is not the one who the invite is sent from - No data
+ * - BadRequest: The request was not valid - API.Error
+ * - Ok: Invite successfully sent - Noti.ChildRequest[]
+ */
 export default class extends Func {
   public async run() {
     // Validate route
@@ -17,7 +30,9 @@ export default class extends Func {
     if (this.user.userId !== childId) this.respond(HttpStatus.Forbidden)
 
     // Create invite
-    const res = await this.query(`
+    const res = await this.query<
+      Vertex<Hide<UserProperties, "password" | "email">, "user">
+    >(`
       g.V('${parentId}')
         .hasLabel('user')
         .as('parent')
@@ -29,6 +44,7 @@ export default class extends Func {
         .property('timestamp', ${Date.now()})
         .from('parent')
         .to('child')
+      .V('${childId}')
     `)
 
     // Handle if the parent ID does not exist
@@ -37,7 +53,16 @@ export default class extends Func {
         message: "Invalid parent ID provided"
       })
 
+    // Remove properties that shouldn't be sent
+    for (const child of res._items) {
+      delete child.properties.password
+      delete child.properties.email
+    }
+
     // Respond to request
-    return this.respond(HttpStatus.NoContent)
+    return this.respond(
+      HttpStatus.Ok,
+      res._items.map(child => ({ type: "childRequest", child }))
+    )
   }
 }
