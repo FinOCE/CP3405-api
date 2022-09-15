@@ -10,7 +10,7 @@
         "put",
         "delete"
       ],
-      "route": "users/{parentId:regex(^[a-zA-Z0-9]+$)}/apps/{appId:regex(^[a-zA-Z0-9]+$)?}"
+      "route": "users/{parentId:regex(^[a-zA-Z0-9]+$)}/apps/{appId:regex(^[a-zA-Z0-9.]+$)?}"
     },
     {
       "type": "http",

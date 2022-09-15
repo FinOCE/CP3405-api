@@ -20,10 +20,13 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
+    "@types/node-fetch": "^2.6.2",
+    "cheerio": "^1.0.0-rc.12",
     "email-validator": "^2.0.4",
     "gremlin": "^3.6.1",
     "gremlin-cosmos": "0.0.14",
     "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.6",
     "password-validator": "^5.3.0",
     "short-uuid": "^4.2.0"
   }
