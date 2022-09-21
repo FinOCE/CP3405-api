@@ -109,7 +109,7 @@ export default class extends Func {
       return this.respond(HttpStatus.BadRequest, {
         message: "No role provided"
       })
-    else if (!["Role", "Child"].includes(role))
+    else if (!["Parent", "Child"].includes(role))
       return this.respond(HttpStatus.BadRequest, {
         message: "Invalid role provided"
       })
