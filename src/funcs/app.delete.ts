@@ -1,4 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
+import Notification from "../models/Notification"
 import { UserProperties } from "../types/user"
 
 /**
@@ -11,7 +12,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not marked as the parent's child - No data
  * - BadRequest: The request was not valid - API.Error
- * - NoContent: App successfully removed - No datda
+ * - NoContent: App successfully removed - Noti.AppRemove[]
  */
 export default class extends Func {
   public async run() {
@@ -55,7 +56,27 @@ export default class extends Func {
         .drop()
     `)
 
-    // Respond to func call
-    return this.respond(HttpStatus.NoContent)
+    // Send notification for app being removed to parent
+    const notification = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${appId}')
+          .as('app')
+        .V('${parentId}')
+          .as('vertex')
+        .addE('hasNotification')
+          .property('type', 'appRemove')
+          .property('timestamp', ${Date.now()})
+          .property('viewed', false)
+          .from('vertex')
+          .to('app')
+          .as('edge')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
+
+    // Respond to request
+    return this.respond(HttpStatus.Ok, notification)
   }
 }

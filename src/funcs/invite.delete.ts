@@ -1,5 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
+import Notification from "../models/Notification"
 import { UserProperties } from "../types/user"
 
 /**
@@ -12,7 +13,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not the one who received the invite - No data
  * - BadRequest: The request was not valid - API.Error
- * - Ok: Invite successfully declined - Noti.ChildRequestDecline[]
+ * - Ok: Invite successfully declined - Noti.InviteDecline[]
  */
 export default class extends Func {
   public async run() {
@@ -51,10 +52,27 @@ export default class extends Func {
       delete child.properties.email
     }
 
+    // Send notification for invite being declined to child
+    const notification = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${parentId}')
+          .as('parent')
+        .V('${childId}')
+          .as('vertex')
+        .addE('hasNotification')
+          .property('type', 'inviteDecline')
+          .property('timestamp', ${Date.now()})
+          .property('viewed', false)
+          .from('vertex')
+          .to('parent')
+          .as('edge')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
+
     // Respond to request
-    return this.respond(
-      HttpStatus.Ok,
-      res._items.map(child => ({ type: "childRequestDecline", child }))
-    )
+    return this.respond(HttpStatus.Ok, notification)
   }
 }

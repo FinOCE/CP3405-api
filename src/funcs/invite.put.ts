@@ -1,5 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
+import Notification from "../models/Notification"
 import { UserProperties } from "../types/user"
 
 /**
@@ -12,7 +13,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not the one who the invite is sent from - No data
  * - BadRequest: The request was not valid - API.Error
- * - Ok: Invite successfully sent - Noti.ChildRequest[]
+ * - Ok: Invite successfully sent - Noti.InviteAdd[]
  */
 export default class extends Func {
   public async run() {
@@ -45,10 +46,7 @@ export default class extends Func {
           .as('child')
         .select('parent', 'child')
       `
-    ).then(res => {
-      console.log(res._items)
-      return res._items[0]?.child && res._items[0]?.parent
-    })
+    ).then(res => res._items[0]?.child && res._items[0]?.parent)
 
     if (!validRoles)
       return this.respond(HttpStatus.BadRequest, {
@@ -85,10 +83,27 @@ export default class extends Func {
       delete child.properties.email
     }
 
+    // Send notification for new invite to parent
+    const notification = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${childId}')
+          .as('child')
+        .V('${parentId}')
+          .as('vertex')
+        .addE('hasNotification')
+          .property('type', 'inviteAdd')
+          .property('timestamp', ${Date.now()})
+          .property('viewed', false)
+          .from('vertex')
+          .to('child')
+          .as('edge')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
+
     // Respond to request
-    return this.respond(
-      HttpStatus.Ok,
-      res._items.map(child => ({ type: "childRequest", child }))
-    )
+    return this.respond(HttpStatus.Ok, notification)
   }
 }

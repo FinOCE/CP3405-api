@@ -14,7 +14,10 @@ import { UserProperties } from "../types/user"
  * - Forbidden: User is not marked as the parent's child - No data
  * - BadRequest: The request was not valid - API.Error
  * - NotFound: Specific app could not be found - No data
- * - Ok: App successfully recommended - Noti.NewApp[]
+ * - Ok: App successfully recommended - {
+ *  app: API.Vertex<App, 'app'>
+ *  edge: API.Edge<AppEdge, 'hasApp'>
+ * }
  */
 export default class extends Func {
   public async run() {
