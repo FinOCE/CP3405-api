@@ -1,5 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
+import Notification from "../models/Notification"
 import { UserProperties } from "../types/user"
 
 /**
@@ -12,7 +13,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not the one who received the invite - No data
  * - BadRequest: The request was not valid - API.Error
- * - Ok: Invite successfully accepted - Noti.ChildRequestAccept[]
+ * - Ok: Invite successfully accepted - Noti.InviteAccept[]
  */
 export default class extends Func {
   public async run() {
@@ -110,17 +111,33 @@ export default class extends Func {
       .V('${childId}')
         .as('child')
       .addE('hasNotification')
-        .property('type', 'childRequestAccept')
+        .property('type', 'inviteAccept')
         .property('timestamp', ${Date.now()})
         .property('viewed', false)
         .from('child')
         .to('parent')
     `)
 
+    const notification = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${parentId}')
+          .as('parent')
+        .V('${childId}')
+          .as('vertex')
+        .addE('hasNotification')
+          .property('type', 'inviteAccept')
+          .property('timestamp', ${Date.now()})
+          .property('viewed', false)
+          .from('vertex')
+          .to('parent')
+          .as('edge')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
+
     // Respond to request
-    return this.respond(
-      HttpStatus.Ok,
-      res._items.map(child => ({ type: "childRequestAccept", child }))
-    )
+    return this.respond(HttpStatus.Ok, notification)
   }
 }

@@ -16,7 +16,7 @@ import { UserProperties } from "../types/user"
  * - Forbidden: User is not the one who received the invites - No data
  * - BadRequest: The request was not valid - API.Error
  * - NotFound: Specific child invite could not be found - No data
- * - Ok: Successfully fetched the invites: Noti.ChildRequest[]
+ * - Ok: Successfully fetched the invites: TBD
  */
 export default class extends Func {
   public async run() {

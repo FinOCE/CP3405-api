@@ -1,4 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
+import Notification from "../models/Notification"
 
 /**
  * Fetch a user's notifications. Notifications will only show if they are less
@@ -21,9 +22,21 @@ export default class extends Func {
     if (this.user?.userId !== userId) return this.respond(HttpStatus.Forbidden)
 
     // Fetch all notifications
-    // TODO: Implement
+    const notifications: Noti.Unknown[] = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${userId}')
+          .hasLabel('user')
+        .outE('hasNotification')
+          .as('edge')
+        .inV()
+          .as('vertex')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
 
     // Respond to the function call
-    return this.respond(HttpStatus.NotImplemented)
+    return this.respond(HttpStatus.Ok, notifications)
   }
 }

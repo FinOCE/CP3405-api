@@ -2,6 +2,7 @@ import Func, { HttpStatus } from "../models/Func"
 import fetch from "node-fetch"
 import { load } from "cheerio"
 import { UserProperties } from "../types/user"
+import Notification from "../models/Notification"
 
 /**
  * Add an app to a parent. Called when an app is sent
@@ -15,7 +16,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not marked as the parent's child - No data
  * - BadRequest: The request was not valid - API.Error
- * - Ok: App successfully recommended - Noti.NewApp[]
+ * - Ok: App successfully recommended - Noti.AppAdd[]
  */
 export default class extends Func {
   public async run() {
@@ -108,20 +109,26 @@ export default class extends Func {
     `)
 
     // Send notification for new app to parent
-    await this.query(`
-      g.V('${appId}')
-        .as('app)
-      .V('${parentId}')
-        .as('parent')
-      .addE('hasNotification')
-        .property('type', 'appAdd')
-        .property('timestamp', ${Date.now()})
-        .property('viewed', false)
-        .from('parent')
-        .to('app')
-    `)
+    const notification = await this.query<
+      EdgeAndVertex<Noti.Base, any, "hasNotification", string>
+    >(
+      `
+        g.V('${appId}')
+          .as('app')
+        .V('${parentId}')
+          .as('vertex')
+        .addE('hasNotification')
+          .property('type', 'appAdd')
+          .property('timestamp', ${Date.now()})
+          .property('viewed', false)
+          .from('vertex')
+          .to('app')
+          .as('edge')
+        .select('edge', 'vertex')
+      `
+    ).then(res => res._items.map(noti => Notification.generate(noti)))
 
-    // Respond to function call
-    return this.respond(HttpStatus.Ok, [{ type: "newApp", app }])
+    // Respond to request
+    return this.respond(HttpStatus.Ok, notification)
   }
 }
