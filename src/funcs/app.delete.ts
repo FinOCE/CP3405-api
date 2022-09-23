@@ -55,6 +55,20 @@ export default class extends Func {
         .drop()
     `)
 
+    // Send notification for app being removed to parent
+    await this.query(`
+      g.V('${appId}')
+        .as('app)
+      .V('${parentId}')
+        .as('parent')
+      .addE('hasNotification')
+        .property('type', 'appRemove')
+        .property('timestamp', ${Date.now()})
+        .property('viewed', false)
+        .from('parent')
+        .to('app')
+    `)
+
     // Respond to func call
     return this.respond(HttpStatus.NoContent)
   }

@@ -51,6 +51,20 @@ export default class extends Func {
       delete child.properties.email
     }
 
+    // Send notification for invite being declined to child
+    await this.query(`
+      g.V('${parentId}')
+        .as('parent')
+      .V('${childId}')
+        .as('child')
+      .addE('hasNotification')
+        .property('type', 'childRequestDecline')
+        .property('timestamp', ${Date.now()})
+        .property('viewed', false)
+        .from('child')
+        .to('parent')
+    `)
+
     // Respond to request
     return this.respond(
       HttpStatus.Ok,

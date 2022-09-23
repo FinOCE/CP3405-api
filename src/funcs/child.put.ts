@@ -103,6 +103,20 @@ export default class extends Func {
       delete child.properties.email
     }
 
+    // Send notification for new child to parent
+    await this.query(`
+      g.V('${parentId}')
+        .as('parent')
+      .V('${childId}')
+        .as('child')
+      .addE('hasNotification')
+        .property('type', 'childRequestAccept')
+        .property('timestamp', ${Date.now()})
+        .property('viewed', false)
+        .from('child')
+        .to('parent')
+    `)
+
     // Respond to request
     return this.respond(
       HttpStatus.Ok,

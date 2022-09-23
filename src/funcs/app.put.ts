@@ -107,6 +107,20 @@ export default class extends Func {
         .to('app')
     `)
 
+    // Send notification for new app to parent
+    await this.query(`
+      g.V('${appId}')
+        .as('app)
+      .V('${parentId}')
+        .as('parent')
+      .addE('hasNotification')
+        .property('type', 'appAdd')
+        .property('timestamp', ${Date.now()})
+        .property('viewed', false)
+        .from('parent')
+        .to('app')
+    `)
+
     // Respond to function call
     return this.respond(HttpStatus.Ok, [{ type: "newApp", app }])
   }

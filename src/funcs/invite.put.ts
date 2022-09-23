@@ -85,6 +85,20 @@ export default class extends Func {
       delete child.properties.email
     }
 
+    // Send notification for new invite to parent
+    await this.query(`
+      g.V('${childId}')
+        .as('child')
+      .V('${parentId}')
+        .as('parent')
+      .addE('hasNotification')
+        .property('type', 'inviteAdd')
+        .property('timestamp', ${Date.now()})
+        .property('viewed', false)
+        .from('parent')
+        .to('child')
+    `)
+
     // Respond to request
     return this.respond(
       HttpStatus.Ok,

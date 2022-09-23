@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "users/{userId:regex(^[a-zA-Z0-9]+$)}/notifications/type:regex(^(all)|(unread)$)"
+      "route": "users/{userId:regex(^[a-zA-Z0-9]+$)}/notifications"
     },
     {
       "type": "http",
