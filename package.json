@@ -21,7 +21,6 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
     "email-validator": "^2.0.4",
     "gremlin": "^3.6.1",
     "gremlin-cosmos": "0.0.14",

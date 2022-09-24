@@ -1,6 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
-import fetch from "node-fetch"
-import { load } from "cheerio"
+// import fetch from "node-fetch"
+// import { load } from "cheerio"
 import { UserProperties } from "../types/user"
 import Notification from "../models/Notification"
 
@@ -10,6 +10,9 @@ import Notification from "../models/Notification"
  * Route: PUT /users/{parentId}/apps/{appId}
  * Body: {
  *  message: string | undefined
+ *  name: string
+ *  creator: string
+ *  iconUrl: string
  * }
  *
  * Possible responses:
@@ -30,6 +33,16 @@ export default class extends Func {
       })
 
     const message: string | undefined = this.req.body?.message
+
+    // Get data from body (TEMPORARY - Cheerio is breaking the pipeline... TODO: Fix)
+    const name: string | undefined = this.req.body.name
+    const creator: string | undefined = this.req.body.creator
+    const iconUrl: string | undefined = this.req.body.iconUrl
+
+    if (!name || !creator || !iconUrl)
+      return this.respond(HttpStatus.BadRequest, {
+        message: "Missing some temporary body props"
+      })
 
     // Check that the user is a child of the parent
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
@@ -60,15 +73,16 @@ export default class extends Func {
     // Add app to database if it doesn't exist
     if (!app) {
       // Scrape the play store for details
-      const html = await fetch(
-        `https://play.google.com/store/apps/details?id=${appId}`,
-        { method: "GET" }
-      ).then(res => res.text())
+      // To use this code: npm i cheerio@latest
+      // const html = await fetch(
+      //   `https://play.google.com/store/apps/details?id=${appId}`,
+      //   { method: "GET" }
+      // ).then(res => res.text())
 
-      const $ = load(html)
-      const name = $(".Fd93Bb").find("span").text()
-      const creator = $(".Vbfug").find("span").text()
-      const iconUrl = $(".Mqg6jb").find("img").attr("src")
+      // const $ = load(html)
+      // const name = $(".Fd93Bb").find("span").text()
+      // const creator = $(".Vbfug").find("span").text()
+      // const iconUrl = $(".Mqg6jb").find("img").attr("src")
 
       // Create app in database
       app = await this.query<Vertex<App, "app">>(
