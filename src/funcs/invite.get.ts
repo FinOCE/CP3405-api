@@ -14,7 +14,6 @@ import { UserProperties } from "../types/user"
  * Possible responses:
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not the one who received the invites - No data
- * - BadRequest: The request was not valid - API.Error
  * - NotFound: Specific child invite could not be found - No data
  * - Ok: Successfully fetched the invites: API.Vertex<User, 'user'>[]
  */

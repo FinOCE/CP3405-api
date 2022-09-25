@@ -12,7 +12,6 @@ import { UserProperties } from "../types/user"
  * Possible responses:
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not marked as the parent's child - No data
- * - BadRequest: The request was not valid - API.Error
  * - NotFound: Specific app could not be found - No data
  * - Ok: App successfully recommended - {
  *  app: API.Vertex<App, 'app'>

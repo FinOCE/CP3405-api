@@ -12,7 +12,7 @@ import { UserProperties } from "../types/user"
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not marked as the parent's child - No data
  * - BadRequest: The request was not valid - API.Error
- * - NoContent: App successfully removed - Noti.AppRemove[]
+ * - Ok: App successfully removed - Noti.AppRemove[]
  */
 export default class extends Func {
   public async run() {
