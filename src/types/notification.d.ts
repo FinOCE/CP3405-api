@@ -3,11 +3,12 @@ declare namespace Noti {
    * All different types of notifications
    */
   type Type =
-    | "inviteAccept"
-    | "inviteDecline"
     | "appAdd"
     | "appRemove"
+    | "childRemove"
+    | "inviteAccept"
     | "inviteAdd"
+    | "inviteDecline"
 
   /**
    * Base type for notifications
@@ -61,5 +62,10 @@ declare namespace Noti {
   type AppRemove = Base & {
     type: "appRemove"
     app: Vertex<App, "app">
+  }
+
+  type ChildRemove = Base & {
+    type: "childRemove"
+    child: Vertex<User, "user">
   }
 }

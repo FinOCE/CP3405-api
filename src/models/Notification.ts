@@ -22,6 +22,10 @@ export default class Notification {
       return Object.assign(base, {
         app: data.vertex
       })
+    } else if (data.edge.properties.type === "childRemove") {
+      return Object.assign(base, {
+        child: data.vertex
+      })
     } else if (data.edge.properties.type === "inviteAccept") {
       return Object.assign(base, {
         parent: data.vertex
