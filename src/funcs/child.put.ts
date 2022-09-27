@@ -104,33 +104,20 @@ export default class extends Func {
     }
 
     // Send notification for new child to parent
-    await this.query(`
-      g.V('${parentId}')
-        .as('parent')
-      .V('${childId}')
-        .as('child')
-      .addE('hasNotification')
-        .property('type', 'inviteAccept')
-        .property('timestamp', ${Date.now()})
-        .property('viewed', false)
-        .from('child')
-        .to('parent')
-    `)
-
     const notification = await this.query<
       EdgeAndVertex<Noti.Base, any, "hasNotification", string>
     >(
       `
-        g.V('${parentId}')
-          .as('parent')
-        .V('${childId}')
+        g.V('${childId}')
+          .as('child')
+        .V('${parentId}')
           .as('vertex')
         .addE('hasNotification')
           .property('type', 'inviteAccept')
           .property('timestamp', ${Date.now()})
           .property('viewed', false)
-          .from('vertex')
-          .to('parent')
+          .from('child')
+          .to('vertex')
           .as('edge')
         .select('edge', 'vertex')
       `

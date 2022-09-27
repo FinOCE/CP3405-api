@@ -126,22 +126,23 @@ export default class extends Func {
       EdgeAndVertex<Noti.Base, any, "hasNotification", string>
     >(
       `
-        g.V('${appId}')
-          .as('app')
-        .V('${parentId}')
+        g.V('${parentId}')
+          .as('parent')
+        .V('${appId}')
           .as('vertex')
         .addE('hasNotification')
           .property('type', 'appAdd')
           .property('timestamp', ${Date.now()})
           .property('viewed', false)
-          .from('vertex')
-          .to('app')
+          ${!message ? "" : `.property('message', '${message}')`}
+          .from('parent')
+          .to('vertex')
           .as('edge')
         .select('edge', 'vertex')
       `
     ).then(res => res._items.map(noti => Notification.generate(noti)))
 
     // Respond to request
-    return this.respond(HttpStatus.Ok, notification) // TODO: Include notification message!!!
+    return this.respond(HttpStatus.Ok, notification)
   }
 }

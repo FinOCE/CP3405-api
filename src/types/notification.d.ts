@@ -55,6 +55,7 @@ declare namespace Noti {
   type AppAdd = Base & {
     type: "appAdd"
     app: Vertex<App, "app">
+    message?: string
   }
 
   /**
@@ -70,7 +71,7 @@ declare namespace Noti {
    */
   type ChildRemove = Base & {
     type: "childRemove"
-    child: Vertex<User, "user">
+    parent: Vertex<User, "user">
   }
 
   /**
@@ -78,6 +79,6 @@ declare namespace Noti {
    */
   type ParentRemove = Base & {
     type: "parentRemove"
-    parent: Vertex<User, "user">
+    child: Vertex<User, "user">
   }
 }

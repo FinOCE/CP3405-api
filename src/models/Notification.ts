@@ -15,8 +15,17 @@ export default class Notification {
     delete data.vertex.properties.email
 
     if (data.edge.properties.type === "appAdd") {
+      const isAppEdge = (props: Noti.Base): props is Noti.Base & AppEdge => {
+        return "message" in props
+      }
+
+      const message = isAppEdge(data.edge.properties)
+        ? data.edge.properties.message
+        : undefined
+
       return Object.assign(base, {
-        app: data.vertex
+        app: data.vertex,
+        message
       })
     } else if (data.edge.properties.type === "appRemove") {
       return Object.assign(base, {
@@ -24,7 +33,7 @@ export default class Notification {
       })
     } else if (data.edge.properties.type === "childRemove") {
       return Object.assign(base, {
-        child: data.vertex
+        parent: data.vertex
       })
     } else if (data.edge.properties.type === "inviteAccept") {
       return Object.assign(base, {
@@ -40,7 +49,7 @@ export default class Notification {
       })
     } else if (data.edge.properties.type === "parentRemove") {
       return Object.assign(base, {
-        parent: data.vertex
+        child: data.vertex
       })
     } else throw new Error("Unknown notification attempted to be fetched")
   }

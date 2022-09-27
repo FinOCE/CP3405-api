@@ -8,5 +8,4 @@ type App = {
 
 type AppEdge = {
   message: string
-  timestamp: number
 }

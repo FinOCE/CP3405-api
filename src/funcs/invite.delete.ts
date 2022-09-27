@@ -55,16 +55,16 @@ export default class extends Func {
       EdgeAndVertex<Noti.Base, any, "hasNotification", string>
     >(
       `
-        g.V('${parentId}')
-          .as('parent')
-        .V('${childId}')
+        g.V('${childId}')
+          .as('child')
+        .V('${parentId}')
           .as('vertex')
         .addE('hasNotification')
           .property('type', 'inviteDecline')
           .property('timestamp', ${Date.now()})
           .property('viewed', false)
-          .from('vertex')
-          .to('parent')
+          .from('child')
+          .to('vertex')
           .as('edge')
         .select('edge', 'vertex')
       `

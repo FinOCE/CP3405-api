@@ -37,6 +37,6 @@ export default class extends Func {
     ).then(res => res._items.map(noti => Notification.generate(noti)))
 
     // Respond to the function call
-    return this.respond(HttpStatus.Ok, notifications) // TODO: Add message to new app notifications!!!
+    return this.respond(HttpStatus.Ok, notifications)
   }
 }
