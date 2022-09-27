@@ -16,7 +16,7 @@ import { UserProperties } from "../types/user"
  * - Ok: App successfully recommended - {
  *  app: API.Vertex<App, 'app'>
  *  edge: API.Edge<AppEdge, 'hasApp'>
- * }
+ * }[]
  */
 export default class extends Func {
   public async run() {

@@ -143,6 +143,6 @@ export default class extends Func {
     ).then(res => res._items.map(noti => Notification.generate(noti)))
 
     // Respond to request
-    return this.respond(HttpStatus.Ok, notification)
+    return this.respond(HttpStatus.Ok, notification) // TODO: Include notification message!!!
   }
 }
