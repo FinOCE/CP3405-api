@@ -1,7 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
 import Notification from "../models/Notification"
-import { UserProperties } from "../types/user"
-
 /**
  * Remove an app from a parent. Called when an app is removed.
  *
@@ -28,7 +26,7 @@ export default class extends Func {
     // Check that the user is a child of the parent
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
-    const child = await this.query<Vertex<UserProperties, "user"> | undefined>(
+    const child = await this.query<Vertex<User, "user"> | undefined>(
       `
         g.V('${parentId}')
           .hasLabel('user')

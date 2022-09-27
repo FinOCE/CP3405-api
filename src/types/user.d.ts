@@ -1,6 +1,4 @@
-import { Roles } from "../models/User"
-
-export type UserProperties = {
+type User = {
   userId: string
   email: string
   password: string
@@ -8,5 +6,5 @@ export type UserProperties = {
   lastName: string
   nickName: string
   timestamp: number
-  role: keyof typeof Roles
+  role: "Parent" | "Child"
 }

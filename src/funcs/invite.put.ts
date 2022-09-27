@@ -1,7 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
 import Notification from "../models/Notification"
-import { UserProperties } from "../types/user"
 
 /**
  * Create an invite. This is called when an invite is sent.
@@ -32,8 +31,8 @@ export default class extends Func {
 
     // Check that user roles are correct
     const validRoles = await this.query<{
-      parent: Vertex<UserProperties, "user">
-      child: Vertex<UserProperties, "user">
+      parent: Vertex<User, "user">
+      child: Vertex<User, "user">
     }>(
       `
         g.V('${parentId}')
@@ -55,7 +54,7 @@ export default class extends Func {
 
     // Create invite
     const res = await this.query<
-      Vertex<Hide<UserProperties, "password" | "email">, "user">
+      Vertex<Hide<User, "password" | "email">, "user">
     >(`
       g.V('${parentId}')
         .hasLabel('user')

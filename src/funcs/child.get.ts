@@ -1,5 +1,4 @@
 import Func, { HttpStatus } from "../models/Func"
-import { UserProperties } from "../types/user"
 
 /**
  * Fetch all of a parent's children or just a specific one.
@@ -30,9 +29,7 @@ export default class extends Func {
       return this.respond(HttpStatus.Forbidden)
 
     if (childId) {
-      const child = await this.query<
-        Vertex<UserProperties, "user"> | undefined
-      >(
+      const child = await this.query<Vertex<User, "user"> | undefined>(
         `
           g.V('${parentId}')
             .hasLabel('user')
@@ -50,7 +47,7 @@ export default class extends Func {
     }
 
     // Fetch existing app connection(s)
-    const children = await this.query<Vertex<UserProperties, "user">>(
+    const children = await this.query<Vertex<User, "user">>(
       `
         g.V('${parentId}')
           .hasLabel('user')

@@ -1,7 +1,5 @@
 import { Context, HttpRequest } from "@azure/functions"
 import { Token } from "../managers/TokenManager"
-import { Roles } from "../models/User"
-import { UserProperties } from "../types/user"
 import * as Gremlin from "gremlin"
 import { GremlinResponse } from "gremlin-cosmos"
 
@@ -11,8 +9,7 @@ export type CosmosStats = {
 }
 
 export default abstract class Func {
-  public user?: Token<UserProperties>
-  public roles: Roles[] = []
+  public user?: Token<User>
   public cosmosStats: CosmosStats = {
     "server-time": 0,
     "request-charge": 0

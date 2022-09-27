@@ -1,7 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 // import fetch from "node-fetch"
 // import { load } from "cheerio"
-import { UserProperties } from "../types/user"
 import Notification from "../models/Notification"
 
 /**
@@ -47,7 +46,7 @@ export default class extends Func {
     // Check that the user is a child of the parent
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
-    const child = await this.query<Vertex<UserProperties, "user"> | undefined>(
+    const child = await this.query<Vertex<User, "user"> | undefined>(
       `
         g.V('${parentId}')
           .hasLabel('user')

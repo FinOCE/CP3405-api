@@ -1,6 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
-import { UserProperties } from "../types/user"
 
 /**
  * Fetch existing invites. This finds all pending invites. If no childId is
@@ -29,7 +28,7 @@ export default class extends Func {
 
     // Fetch invite
     const res = await this.query<
-      Vertex<Hide<UserProperties, "password" | "email">, "user">
+      Vertex<Hide<User, "password" | "email">, "user">
     >(`
       g.V('${parentId}')
         .hasLabel('user')
