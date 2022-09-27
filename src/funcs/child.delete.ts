@@ -10,7 +10,7 @@ import Notification from "../models/Notification"
  * Possible responses:
  * - Unauthorized: User is not logged in - No data
  * - Forbidden: User is not marked as the parent - No data
- * - BadRequest: Child ID was not provided - No data
+ * - BadRequest: Child ID was not provided - API.Error
  * - Ok: Child successfully removed - Noti.childRemove[]
  */
 export default class extends Func {
