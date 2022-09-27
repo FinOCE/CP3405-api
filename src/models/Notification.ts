@@ -38,6 +38,10 @@ export default class Notification {
       return Object.assign(base, {
         parent: data.vertex
       })
+    } else if (data.edge.properties.type === "parentRemove") {
+      return Object.assign(base, {
+        parent: data.vertex
+      })
     } else throw new Error("Unknown notification attempted to be fetched")
   }
 }

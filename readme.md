@@ -1,0 +1,3 @@
+# CP3405 API
+
+This is the API for our group CP3405 assessment. It is used in conjunction with the app developed [here](https://github.com/FinOCE/cp3405-app). It is created using Azure Functions to deploy to the cloud, and communicates with the app over HTTP. It connects to Azure Cosmos DB which is running a graph database to store data. The system architecture is entirely serverless so it can automatically scale to any size. There are several folders in the root directory starting with `f_` and these are necessary due to a limitation in the JavaScript Azure Functions host. The functions themselves are housed under `src/funcs` to keep them together since this is a small API.
