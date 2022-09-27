@@ -1,7 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
 import Notification from "../models/Notification"
-import { UserProperties } from "../types/user"
 
 /**
  * Add a child to a parent. This is called when an invite is accepted.
@@ -60,7 +59,7 @@ export default class extends Func {
 
     // Create connection and mark status as accepted
     const res = await this.query<
-      Vertex<Hide<UserProperties, "password" | "email">, "user">
+      Vertex<Hide<User, "password" | "email">, "user">
     >(`
       g.V('${parentId}')
         .hasLabel('user')

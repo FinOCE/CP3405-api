@@ -5,3 +5,8 @@ type App = {
   creator: string
   iconUrl: string
 }
+
+type AppEdge = {
+  message: string
+  timestamp: number
+}

@@ -1,7 +1,6 @@
 import PasswordManager from "../managers/PasswordManager"
 import TokenManager from "../managers/TokenManager"
 import Func, { HttpStatus } from "../models/Func"
-import { UserProperties } from "../types/user"
 
 /**
  * Attempt to login.
@@ -42,13 +41,13 @@ export default class extends Func {
     const hashedPassword = PasswordManager.hash(password)
 
     // Find user
-    const user = await this.query<UserProperties>(
+    const user = await this.query<User>(
       `g.V()
         .hasLabel('user')
         .has('email', '${email}')
         .has('password', '${hashedPassword}')
         .map(valueMap().unfold().group().by(keys).by(select(values).limit(local,1)))`
-    ).then(res => res._items?.[0] as UserProperties | undefined)
+    ).then(res => res._items?.[0] as User | undefined)
 
     if (!user) return this.respond(HttpStatus.Forbidden)
 

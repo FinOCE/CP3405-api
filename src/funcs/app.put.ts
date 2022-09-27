@@ -1,7 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 // import fetch from "node-fetch"
 // import { load } from "cheerio"
-import { UserProperties } from "../types/user"
 import Notification from "../models/Notification"
 
 /**
@@ -47,7 +46,7 @@ export default class extends Func {
     // Check that the user is a child of the parent
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
-    const child = await this.query<Vertex<UserProperties, "user"> | undefined>(
+    const child = await this.query<Vertex<User, "user"> | undefined>(
       `
         g.V('${parentId}')
           .hasLabel('user')
@@ -143,6 +142,6 @@ export default class extends Func {
     ).then(res => res._items.map(noti => Notification.generate(noti)))
 
     // Respond to request
-    return this.respond(HttpStatus.Ok, notification)
+    return this.respond(HttpStatus.Ok, notification) // TODO: Include notification message!!!
   }
 }

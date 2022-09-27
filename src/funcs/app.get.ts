@@ -1,5 +1,4 @@
 import Func, { HttpStatus } from "../models/Func"
-import { UserProperties } from "../types/user"
 
 /**
  * Get apps recommended to the parent. If an appId is provided,
@@ -16,7 +15,7 @@ import { UserProperties } from "../types/user"
  * - Ok: App successfully recommended - {
  *  app: API.Vertex<App, 'app'>
  *  edge: API.Edge<AppEdge, 'hasApp'>
- * }
+ * }[]
  */
 export default class extends Func {
   public async run() {
@@ -27,7 +26,7 @@ export default class extends Func {
     // Check that request is made by the parent or a child
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
-    const child = await this.query<Vertex<UserProperties, "user"> | undefined>(
+    const child = await this.query<Vertex<User, "user"> | undefined>(
       `
         g.V('${parentId}')
           .hasLabel('user')

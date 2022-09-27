@@ -1,6 +1,5 @@
 import Func, { HttpStatus } from "../models/Func"
 import { validate } from "email-validator"
-import { UserProperties } from "../types/user"
 import PasswordManager from "../managers/PasswordManager"
 import TokenManager from "../managers/TokenManager"
 import short from "short-uuid"
@@ -15,7 +14,7 @@ import short from "short-uuid"
  *  firstName: string
  *  lastName: string
  *  nickName: string
- *  roles: Role
+ *  roles: "Parent" | "Child"
  * }
  *
  * Possible responses:
@@ -129,7 +128,7 @@ export default class extends Func {
     // Create account
     const id = short().generate()
 
-    const user = await this.query<UserProperties>(
+    const user = await this.query<User>(
       `g.addV('user')
         .property('id', '${id}')
         .property('userId', '${id}')

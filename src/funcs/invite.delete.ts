@@ -1,8 +1,6 @@
 import Func, { HttpStatus } from "../models/Func"
 import { InviteStatus } from "../models/Invite"
 import Notification from "../models/Notification"
-import { UserProperties } from "../types/user"
-
 /**
  * Decline a child invite. This is called when an invite is declined.
  *
@@ -33,7 +31,7 @@ export default class extends Func {
 
     // Submit query
     const res = await this.query<
-      Vertex<Hide<UserProperties, "password" | "email">, "user">
+      Vertex<Hide<User, "password" | "email">, "user">
     >(`
       g.V('${parentId}')
         .hasLabel('user')
