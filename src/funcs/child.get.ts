@@ -24,7 +24,6 @@ export default class extends Func {
       return this.respond(HttpStatus.Forbidden)
 
     // Check that request is made by the parent or a child
-    if (!this.user) return this.respond(HttpStatus.Unauthorized)
     if (!childId && this.user.userId !== parentId)
       return this.respond(HttpStatus.Forbidden)
 
@@ -56,6 +55,10 @@ export default class extends Func {
         .inV()
       `
     ).then(res => res._items)
+
+    // Return 404 if single not found
+    if (childId && children.length === 0)
+      return this.respond(HttpStatus.NotFound)
 
     // Respond to func call
     return this.respond(HttpStatus.Ok, children)
