@@ -64,7 +64,7 @@ export default class extends Func {
       g.V('${parentId}')
         .hasLabel('user')
         .as('parent')
-      .V('${this.user.userId}')
+      .V('${childId}')
         .hasLabel('user')
         .as('child')
       .addE('hasChild')
