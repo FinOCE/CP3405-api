@@ -16,7 +16,9 @@ export default class extends Func {
   public async run() {
     // Validate request
     const userId: string | undefined = this.context.bindingData.id
-    const email: string | undefined = this.req.params.email
+    const email: string | undefined = this.req.query.email
+
+    console.log(userId, email)
 
     if (!email && !userId)
       return this.respond(HttpStatus.BadRequest, {
@@ -31,7 +33,9 @@ export default class extends Func {
     if (!this.user) return this.respond(HttpStatus.Unauthorized)
 
     // Fetch user from database
-    const user = await this.query<Vertex<User, "user">>(
+    const users = await this.query<
+      Vertex<Hide<User, "password" | "email">, "user">
+    >(
       userId
         ? `
           g.V('${userId}')
@@ -44,9 +48,15 @@ export default class extends Func {
         `
     ).then(res => res._items)
 
-    if (user.length === 0) return this.respond(HttpStatus.NotFound)
+    if (users.length === 0) return this.respond(HttpStatus.NotFound)
+
+    // Remove properties that shouldn't be sent
+    for (const user of users) {
+      delete user.properties.password
+      delete user.properties.email
+    }
 
     // Respond to func call
-    return this.respond(HttpStatus.Ok, user)
+    return this.respond(HttpStatus.Ok, users)
   }
 }
